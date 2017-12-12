@@ -1,0 +1,35 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+use Cwd;
+use Debian::Debhelper::Dh_Lib;
+
+init();
+
+on_pkgs_in_parallel {
+	foreach my $package (@_) {
+		next if is_udeb($package);
+
+		my $dbgsym_tmp = dbgsym_tmpdir($package);
+		my $tmp=tmpdir($package);
+
+		install_dir("$tmp/DEBIAN");
+        complex_doit("(cd $tmp >/dev/null ; ima-mtree-sign --privkey /home/paultag/keys/privkey_evm.pem --output DEBIAN/mtree .);");
+		if (-z "$tmp/DEBIAN/mtree") {
+			rm_files("$tmp/DEBIAN/mtree");
+		} else {
+			reset_perm_and_owner(0644, "$tmp/DEBIAN/mtree");
+		}
+
+		if ( -d $dbgsym_tmp) {
+		    install_dir("$dbgsym_tmp/DEBIAN");
+            complex_doit("(cd $dbgsym_tmp >/dev/null ; ima-mtree-sign --privkey /home/paultag/keys/privkey_evm.pem --output DEBIAN/mtree .);");
+		    if (-z "$dbgsym_tmp/DEBIAN/mtree") {
+		    	rm_files("$dbgsym_tmp/DEBIAN/mtree");
+		    } else {
+		    	reset_perm_and_owner(0644, "$dbgsym_tmp/DEBIAN/mtree");
+		    }
+		}
+	}
+};
