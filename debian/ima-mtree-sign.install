@@ -1,0 +1,2 @@
+debhelper/ima.pm usr/share/perl5/Debian/Debhelper/Sequence/
+debhelper/dh_ima usr/bin/
