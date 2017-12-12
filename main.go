@@ -30,16 +30,16 @@ func Main(c *cli.Context) error {
 			return err
 		}
 
+		dh, err := SignTree(key, rand.Reader, crypto.SHA256, arg)
+		if err != nil {
+			return err
+		}
+
 		fd, err := os.Create(c.GlobalString("output"))
 		if err != nil {
 			return err
 		}
 		defer fd.Close()
-
-		dh, err := SignTree(key, rand.Reader, crypto.SHA256, arg)
-		if err != nil {
-			return err
-		}
 
 		if _, err := dh.WriteTo(fd); err != nil {
 			return err
