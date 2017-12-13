@@ -167,7 +167,7 @@ func main() {
 	app.Usage = "ima-mtree-sign [path]"
 	app.Action = Main
 	app.Flags = []cli.Flag{
-		cli.StringFlag{Name: "privkey"},
+		cli.StringFlag{Name: "privkey", EnvVar: "IMA_MTREE_PRIVATE_KEY"},
 		cli.StringFlag{Name: "root", Value: "."},
 		cli.StringFlag{Name: "output", Value: "DEBIAN/mtree"},
 		cli.StringFlag{Name: "control", Value: "DEBIAN/control"},
