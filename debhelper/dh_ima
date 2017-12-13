@@ -15,7 +15,7 @@ on_pkgs_in_parallel {
 		my $tmp=tmpdir($package);
 
 		install_dir("$tmp/DEBIAN");
-        complex_doit("(cd $tmp >/dev/null ; ima-mtree-sign --privkey /home/paultag/keys/privkey_evm.pem --output DEBIAN/mtree .);");
+        complex_doit("(cd $tmp >/dev/null ; ima-mtree-sign);");
 		if (-z "$tmp/DEBIAN/mtree") {
 			rm_files("$tmp/DEBIAN/mtree");
 		} else {
@@ -24,7 +24,7 @@ on_pkgs_in_parallel {
 
 		if ( -d $dbgsym_tmp) {
 		    install_dir("$dbgsym_tmp/DEBIAN");
-            complex_doit("(cd $dbgsym_tmp >/dev/null ; ima-mtree-sign --privkey /home/paultag/keys/privkey_evm.pem --output DEBIAN/mtree .);");
+            complex_doit("(cd $dbgsym_tmp >/dev/null ; ima-mtree-sign);");
 		    if (-z "$dbgsym_tmp/DEBIAN/mtree") {
 		    	rm_files("$dbgsym_tmp/DEBIAN/mtree");
 		    } else {
