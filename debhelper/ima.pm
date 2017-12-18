@@ -6,6 +6,6 @@ use warnings;
 use strict;
 use Debian::Debhelper::Dh_Lib;
 
-insert_before("dh_gencontrol", "dh_ima");
+insert_after("dh_gencontrol", "dh_ima");
 
 1

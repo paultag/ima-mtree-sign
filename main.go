@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"crypto"
 	"crypto/rand"
@@ -21,30 +20,6 @@ import (
 	"pault.ag/go/debian/deb"
 	"pault.ag/go/ima"
 )
-
-func CanonicalizePath(pkg deb.Control, path string) *string {
-	if !strings.HasPrefix(path, "DEBIAN") {
-		return &path
-	}
-
-	var name string
-	switch pkg.MultiArch {
-	case "same", "allowed":
-		name = fmt.Sprintf("%s:%s", pkg.Package, pkg.Architecture)
-	// case "foreign":
-	default:
-		name = pkg.Package
-	}
-
-	base := filepath.Base(path)
-	switch base {
-	case "prerm", "postrm", "preinst", "postinst":
-		el := filepath.Join("/var/lib/dpkg/info", fmt.Sprintf("%s.%s", name, base))
-		return &el
-	default:
-		return nil
-	}
-}
 
 func Main(c *cli.Context) error {
 	fd, err := os.Open(c.GlobalString("control"))
@@ -148,13 +123,8 @@ func SignFile(pkg deb.Control, signer crypto.Signer, entropy io.Reader, hashFunc
 		return nil, err
 	}
 
-	filePath := CanonicalizePath(pkg, relPath)
-	if filePath == nil {
-		return nil, nil
-	}
-
 	return &mtree.Entry{
-		Name: *filePath,
+		Name: relPath,
 		Keywords: []mtree.KeyVal{
 			mtree.KeyVal(fmt.Sprintf("xattr.security.ima=%s", base64.StdEncoding.EncodeToString(sig))),
 		},
